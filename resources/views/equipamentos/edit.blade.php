@@ -34,7 +34,7 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-2 tracking-widest">Categoria</label>
                             <select name="tipos_equipamentos_id" required class="w-full bg-slate-900/50 border border-slate-700 text-slate-200 rounded-2xl px-4 py-3 focus:ring-indigo-500 focus:border-indigo-500">
-                                @foreach($tipos_equipamentos as $tipo)
+                                @foreach($TiposEquipamentos as $tipo)
                                     <option value="{{ $tipo->id }}" {{ old('tipos_equipamentos_id', $equipamento->tipos_equipamentos_id) == $tipo->id ? 'selected' : '' }}>{{ $tipo->name }}</option>
                                 @endforeach
                             </select>

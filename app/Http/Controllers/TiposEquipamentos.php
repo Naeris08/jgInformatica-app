@@ -31,11 +31,13 @@ class TiposEquipamentos extends Controller
      */
     public function store(Request $request)
     {
-        Tipo_equipamento::create([
-            'name' => $request->input('name'),
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
         ]);
 
-        return redirect()->route('tipos_equipamentos.index');
+        Tipo_equipamento::create($validated);
+
+        return redirect()->route('tipos_equipamentos.index')->with('success', 'Categoria criada com sucesso!');
     }
 
     /**
@@ -59,11 +61,13 @@ class TiposEquipamentos extends Controller
      */
     public function update(Request $request, Tipo_equipamento $tipo_equipamento)
     {
-        $tipo_equipamento->update([
-            'name' => $request->input('name'),
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
         ]);
 
-        return redirect()->route('tipos_equipamentos.index');
+        $tipo_equipamento->update($validated);
+
+        return redirect()->route('tipos_equipamentos.index')->with('success', 'Categoria atualizada com sucesso!');
     }
 
     /**

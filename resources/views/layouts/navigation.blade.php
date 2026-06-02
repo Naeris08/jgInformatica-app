@@ -17,11 +17,11 @@
                     </x-nav-link>
 
                     <x-nav-link :href="route('tipos_equipamentos.index')"
-                        :active="request()->routeIs('tipos_equipamentos.*')">
+                        :active="request()->routeIs('TiposEquipamentos.*')">
                         {{ __('Produtos') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('equipamentos.index')" :active="request()->routeIs('equipamentos.*')">
+                    <x-nav-link :href="route('equipamentos.index')" :active="request()->routeIs('Equipamentos.*')">
                         {{ __('Equipamentos') }}
                     </x-nav-link>
 
