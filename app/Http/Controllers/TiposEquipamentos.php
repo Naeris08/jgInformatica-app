@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\tipo_equipamento;
+use App\Models\Tipo_equipamento;
 use Illuminate\Http\Request;
 
-class tipos_equipamentos extends Controller
+class TiposEquipamentos extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $tipos_equipamentos = tipo_equipamento::all();
+        $tipos_equipamentos = Tipo_equipamento::all();
     
     return view('tipos_equipamentos.index', compact('tipos_equipamentos'));
     }
@@ -31,7 +31,7 @@ class tipos_equipamentos extends Controller
      */
     public function store(Request $request)
     {
-        tipo_equipamento::create([
+        Tipo_equipamento::create([
             'name' => $request->input('name'),
         ]);
 
@@ -41,7 +41,7 @@ class tipos_equipamentos extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(tipo_equipamento $tipo_equipamento)
+    public function show(Tipo_equipamento $tipo_equipamento)
     {
         //
     }
@@ -49,7 +49,7 @@ class tipos_equipamentos extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(tipo_equipamento $tipo_equipamento)
+    public function edit(Tipo_equipamento $tipo_equipamento)
     {
         return view('tipos_equipamentos.edit', compact('tipo_equipamento'));
     }
@@ -57,7 +57,7 @@ class tipos_equipamentos extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, tipo_equipamento $tipo_equipamento)
+    public function update(Request $request, Tipo_equipamento $tipo_equipamento)
     {
         $tipo_equipamento->update([
             'name' => $request->input('name'),
@@ -69,7 +69,7 @@ class tipos_equipamentos extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(tipo_equipamento $tipo_equipamento)
+    public function destroy(Tipo_equipamento $tipo_equipamento)
     {
         $tipo_equipamento->delete();
         return redirect()->route('tipos_equipamentos.index');

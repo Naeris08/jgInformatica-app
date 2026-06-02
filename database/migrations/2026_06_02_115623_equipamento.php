@@ -30,6 +30,8 @@ return new class extends Migration
                 $table->boolean('bluetooth')->default(false);
                 $table->integer('portasUSB')->unsigned();
                 $table->integer('portasHDMI')->unsigned();
+                $table->string('image')->nullable();
+                $table->integer('quantidade')->default(0);
 				$table->foreignId('tipos_equipamentos_id')                       
 					->constrained('tipos_equipamentos')                  
 					->onDelete('cascade');                            

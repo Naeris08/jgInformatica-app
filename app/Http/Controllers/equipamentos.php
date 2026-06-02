@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\equipamento;
+use App\Models\Equipamento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\tipos_equipamento;
+use App\Models\Tipo_equipamento;
 
-class equipamentos extends Controller
+class Equipamentos extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $equipamentos = equipamento::all();
+        $equipamentos = Equipamento::all();
         return view('equipamentos.index', compact('equipamentos'));
     }
 
@@ -23,8 +23,9 @@ class equipamentos extends Controller
      */
     public function create()
     {
-        $equipamentos = equipamento::all();
-        return view('equipamentos.create', compact('equipamentos'));
+        $equipamentos = Equipamento::all();
+        $tipos_equipamentos = Tipo_equipamento::all();
+        return view('equipamentos.create', compact('equipamentos', 'tipos_equipamentos'));
     }
 
     /**
@@ -32,40 +33,43 @@ class equipamentos extends Controller
      */
     public function store(Request $request)
     {
-         $validated = $request->validate([
-            //'title' => 'required|string|max:255',
-            'modelo' => 'required|string',
-            'marca' => 'required|string',
-            'tensao' => 'required|integer',
-            'tamanhoTela' => 'required|string',
-            'cor' => 'required|string',
-            'material' => 'required|string',
+        $validated = $request->validate([
+            'modelo' => 'required|string|max:255',
+            'marca' => 'required|string|max:255',
+            'tensao' => 'required|integer|min:0',
+            'tamanhoTela' => 'required|string|max:255',
+            'cor' => 'required|string|max:255',
+            'material' => 'required|string|max:255',
             'acessorios' => 'nullable|string',
-            'resolucaoTela' => 'required|string',
-            'processador' => 'required|string',
-            'memoriaRam' => 'required|integer',
-            'armazenamento' => 'required|integer',
-            'wifi' => 'required|boolean',
-            'portasEthernet' => 'required|boolean',
-            'bluetooth' => 'required|boolean',
-            'portasUSB' => 'required|integer',
-            'portasHDMI' => 'required|integer',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // 2MB
-            'categorias_id' => 'required|exists:categorias,id',
+            'resolucaoTela' => 'required|string|max:255',
+            'processador' => 'required|string|max:255',
+            'memoriaRam' => 'required|integer|min:0',
+            'armazenamento' => 'required|integer|min:0',
+            'wifi' => 'sometimes|boolean',
+            'portasEthernet' => 'sometimes|boolean',
+            'bluetooth' => 'sometimes|boolean',
+            'portasUSB' => 'required|integer|min:0',
+            'portasHDMI' => 'required|integer|min:0',
+            'quantidade' => 'required|integer|min:0',
+            'preco' => 'required|numeric|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tipos_equipamentos_id' => 'required|exists:tipos_equipamentos,id',
         ], [
             'image.image' => 'O arquivo deve ser uma imagem válida.',
             'image.mimes' => 'A imagem deve ser do tipo: jpeg, png, jpg ou gif.',
             'image.max' => 'A imagem não pode ser maior que 2MB.',
         ]);
 
-        // Processar upload da imagem
+        $validated['wifi'] = $request->boolean('wifi');
+        $validated['portasEthernet'] = $request->boolean('portasEthernet');
+        $validated['bluetooth'] = $request->boolean('bluetooth');
+        $validated['title'] = $validated['modelo'];
+
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('equipamentos', 'public');
-            $validated['image'] = $imagePath;
+            $validated['image'] = $request->file('image')->store('equipamentos', 'public');
         }
 
-        // Criar equipamento
-        equipamento::create($validated);
+        Equipamento::create($validated);
 
         return redirect()->route('equipamentos.index')->with('success', 'Equipamento criado com sucesso!');
     }
@@ -73,7 +77,7 @@ class equipamentos extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(equipamento $equipamento)
+    public function show(Equipamento $equipamento)
     {
         //
     }
@@ -81,54 +85,57 @@ class equipamentos extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(equipamento $equipamento)
+    public function edit(Equipamento $equipamento)
     {
-        $equipamentos = equipamento::all();
-        return view('equipamentos.edit', compact('equipamento', 'equipamentos'));
+        $equipamentos = Equipamento::all();
+        $tipos_equipamentos = Tipo_equipamento::all();
+        return view('equipamentos.edit', compact('equipamento', 'equipamentos', 'tipos_equipamentos'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, equipamento $equipamento)
+    public function update(Request $request, Equipamento $equipamento)
     {
-         $validated = $request->validate([
-            //'title' => 'required|string|max:255',
-            'tensao' => 'required|integer',
-            'tamanhoTela' => 'required|string',
-            'cor' => 'required|string',
-            'material' => 'required|string',
+        $validated = $request->validate([
+            'modelo' => 'required|string|max:255',
+            'marca' => 'required|string|max:255',
+            'tensao' => 'required|integer|min:0',
+            'tamanhoTela' => 'required|string|max:255',
+            'cor' => 'required|string|max:255',
+            'material' => 'required|string|max:255',
             'acessorios' => 'nullable|string',
-            'resolucaoTela' => 'required|string',
-            'processador' => 'required|string',
-            'memoriaRam' => 'required|integer',
-            'armazenamento' => 'required|integer',
-            'wifi' => 'required|boolean',
-            'portasEthernet' => 'required|boolean',
-            'bluetooth' => 'required|boolean',
-            'portasUSB' => 'required|integer',
-            'portasHDMI' => 'required|integer',
+            'resolucaoTela' => 'required|string|max:255',
+            'processador' => 'required|string|max:255',
+            'memoriaRam' => 'required|integer|min:0',
+            'armazenamento' => 'required|integer|min:0',
+            'wifi' => 'sometimes|boolean',
+            'portasEthernet' => 'sometimes|boolean',
+            'bluetooth' => 'sometimes|boolean',
+            'portasUSB' => 'required|integer|min:0',
+            'portasHDMI' => 'required|integer|min:0',
+            'quantidade' => 'required|integer|min:0',
+            'preco' => 'required|numeric|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'categorias_id' => 'required|exists:categorias,id',
+            'tipos_equipamentos_id' => 'required|exists:tipos_equipamentos,id',
         ], [
             'image.image' => 'O arquivo deve ser uma imagem válida.',
             'image.mimes' => 'A imagem deve ser do tipo: jpeg, png, jpg ou gif.',
             'image.max' => 'A imagem não pode ser maior que 2MB.',
         ]);
 
-        // Processar upload da nova imagem
+        $validated['wifi'] = $request->boolean('wifi');
+        $validated['portasEthernet'] = $request->boolean('portasEthernet');
+        $validated['bluetooth'] = $request->boolean('bluetooth');
+        $validated['title'] = $validated['modelo'];
+
         if ($request->hasFile('image')) {
-            // Deletar imagem anterior se existir
             if ($equipamento->image && Storage::disk('public')->exists($equipamento->image)) {
                 Storage::disk('public')->delete($equipamento->image);
             }
-
-            // Armazenar nova imagem
-            $imagePath = $request->file('image')->store('equipamentos', 'public');
-            $validated['image'] = $imagePath;
+            $validated['image'] = $request->file('image')->store('equipamentos', 'public');
         }
 
-        // Atualizar equipamento
         $equipamento->update($validated);
 
         return redirect()->route('equipamentos.index')->with('success', 'Equipamento atualizado com sucesso!');
@@ -137,7 +144,7 @@ class equipamentos extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(equipamento $equipamento)
+    public function destroy(Equipamento $equipamento)
     {
         if ($equipamento->image && Storage::disk('public')->exists($equipamento->image)) {
             Storage::disk('public')->delete($equipamento->image);
